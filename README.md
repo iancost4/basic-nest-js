@@ -35,6 +35,10 @@ $ npm install
 ## Running the app
 
 ```bash
+# start mysql (docker)
+$ cd /db
+$ docker-compose up -d
+
 # development
 $ npm run start
 
