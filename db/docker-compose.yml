@@ -1,0 +1,13 @@
+version: '3.5'
+services:
+    localhost:
+        image: mysql:8.0
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: 'password'
+            MYSQL_DATABASE: 'nestjs'
+        ports:
+            - "3309:3306"
+        volumes:
+            - ./data/mysql:/var/lib/mysql

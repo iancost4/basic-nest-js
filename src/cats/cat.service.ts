@@ -1,56 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Cat } from './cat';
 
 @Injectable()
 export class CatService {
-  cats: Cat[] = [
-    { id: 1, name: 'Biscoito' },
-    { id: 2, name: 'Pimpolho' },
-    { id: 3, name: 'Bilbo' },
-    { id: 4, name: 'Yoda' },
-    { id: 5, name: 'Spock' },
-    { id: 6, name: 'Sherlock' },
-    { id: 7, name: 'Frodo' },
-    { id: 8, name: 'Elvis' },
-  ];
+  constructor(
+    @InjectRepository(Cat)
+    private catsRepository: Repository<Cat>,
+  ) {}
 
-  getAll() {
-    return this.cats;
+  async getAll() {
+    return await this.catsRepository.find();
   }
 
-  getById(id: number) {
-    return this.cats.find((value) => value.id == id);
+  async getById(id: number) {
+    return await this.catsRepository.findOne(id);
   }
 
-  store(cat: Cat) {
-    let lastId = 0;
-
-    if (this.cats.length > 0) {
-      lastId = this.cats[this.cats.length - 1].id;
-    }
-
-    cat.id = lastId + 1;
-
-    this.cats.push(cat);
-
-    return cat;
+  async store(cat: Cat) {
+    return await this.catsRepository.save(cat);
   }
 
-  update(cat: Cat) {
-    const catFound = this.cats.find((value) => value.id == cat.id);
+  async update(cat: Cat) {
+    const catFound = await this.catsRepository.findOne(cat.id);
 
-    if (catFound) {
-      catFound.name = cat.name;
-    }
+    catFound.name = cat.name;
 
-    return catFound;
+    return await this.catsRepository.save(catFound);
   }
 
-  delete(id: number) {
-    const index = this.cats.findIndex((value) => value.id == id);
+  async delete(id: number) {
+    const catFound = await this.catsRepository.findOne(id);
 
-    this.cats.splice(index, 1);
-
-    return true;
+    return await this.catsRepository.remove(catFound);
   }
 }
